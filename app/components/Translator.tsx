@@ -33,9 +33,10 @@ const Translator = () => {
       };
     })
     .sort((a, b) => a.label.localeCompare(b.label));
-  const activeLanguage = availableLanguages.find(
-    ({ lang }) => language === lang
-  );
+
+  // const activeLanguage = availableLanguages.find(
+  //   ({ lang }) => language === lang
+  // );
 
   const availableVoices = voices?.filter(({ lang }) => lang === language);
   const activeVoice =

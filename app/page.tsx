@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Translator from "./components/Translator";
 
 export default function Home() {

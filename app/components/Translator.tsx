@@ -89,11 +89,14 @@ const Translator = () => {
           text: transcript,
           language: "pt-BR",
         }),
-      }).then((r) => r.json());
+      });
 
-      setTranslation(results.text);
+      const data = await results.json();
 
-      speak(results.text);
+      alert(data);
+      setTranslation(data.text);
+
+      speak(data.text);
     };
 
     recognitionRef.current.start();

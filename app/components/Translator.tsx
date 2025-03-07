@@ -121,7 +121,7 @@ const Translator = () => {
   }
 
   return (
-    <div className="flex flex-col w-96 m-auto h-full justify-center gap-8">
+    <div className="flex flex-col w-full px-4 md:px-auto md:w-96 m-auto h-full justify-center gap-8">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
           <form className="bg-[#fffeee] rounded p-2">
@@ -130,7 +130,7 @@ const Translator = () => {
                 Translate to:
               </label>
               <select
-                className="w-full text-[.7rem] rounded-sm border-zinc-300 px-2 py-1 pr-7"
+                className="max-w-full text-[.7rem] rounded-sm border-zinc-300 md:px-2 py-1"
                 name="language"
                 value={language}
                 onChange={(event) => {

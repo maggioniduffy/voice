@@ -65,7 +65,9 @@ const Translator = () => {
       return;
     }
 
-    speak(" ");
+    setText("");
+    setTranslation("");
+    speak("");
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
     recognitionRef.current = new SpeechRecognition();
@@ -87,16 +89,21 @@ const Translator = () => {
         method: "POST",
         body: JSON.stringify({
           text: transcript,
-          language: "pt-BR",
+          targetLang: language,
         }),
       });
 
-      const data = await results.json();
+      if (!results.ok) {
+        console.error(await results.text());
+        return;
+      }
 
-      alert(data);
-      setTranslation(data.text);
+      const { text: traduction } = await results.json();
 
-      speak(data.text);
+      console.log("traduction: ", JSON.stringify(traduction));
+      setTranslation(traduction);
+
+      speak(traduction);
     };
 
     recognitionRef.current.start();
@@ -113,69 +120,78 @@ const Translator = () => {
   }
 
   return (
-    <div className="flex flex-col w-96 m-auto gap-5">
-      <div className="bg-[#fffeee] p-2 rounded-xl border-4 border-black flex flex-col gap-2">
-        <div className="p-4 border rounded-xl">
-          <p className="flex items-center gap-3 rounded-xl">
-            <span
-              className={`block rounded-full w-5 h-5 flex-shrink-0 flex-grow-0 ${
-                isActive ? "bg-red-500" : "bg-red-900"
-              } `}
-            >
-              <span className="sr-only">
-                {isActive ? "Actively recording" : "Not actively recording"}
+    <div className="flex flex-col w-96 m-auto h-full justify-center gap-8">
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-2">
+          <form className="bg-[#fffeee] rounded p-2">
+            <div>
+              <label className="block text-gray-800  text-[.6rem] font-bold mb-1">
+                Translate to:
+              </label>
+              <select
+                className="w-full text-[.7rem] rounded-sm border-zinc-300 px-2 py-1 pr-7"
+                name="language"
+                value={language}
+                onChange={(event) => {
+                  setLanguage(event.currentTarget.value);
+                }}
+              >
+                {availableLanguages.map(({ lang, label }) => {
+                  return (
+                    <option key={lang} value={lang}>
+                      {label} ({lang})
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+          </form>
+          <div className="p-4 rounded bg-[#fffeee] flex flex-col">
+            <p className="bg-white flex gap-1 items-center rounded-xl">
+              <span
+                className={`block rounded-full w-5 h-5 flex-shrink-0 flex-grow-0 ${
+                  isActive ? "bg-red-500" : "bg-red-900"
+                } `}
+              >
+                <span className="sr-only">
+                  {isActive ? "Actively recording" : "Not actively recording"}
+                </span>
               </span>
-            </span>
-            <span
-              className={`block rounded w-full h-5 flex-grow-1 ${
-                isSpeechDetected ? "bg-green-500" : "bg-green-900"
-              }`}
-            >
-              <span className="sr-only">
-                {isSpeechDetected
-                  ? "Speech is being recorded"
-                  : "Speech is not being recorded"}
+              <span
+                className={`block rounded w-full h-5 flex-grow-1 ${
+                  isActive ? "bg-green-700" : "bg-green-900"
+                }`}
+              >
+                <span className="sr-only">
+                  {isSpeechDetected
+                    ? "Speech is being recorded"
+                    : "Speech is not being recorded"}
+                </span>
               </span>
-            </span>
+            </p>
+          </div>
+        </div>
+        <div>
+          <h3 className="font-medium text-xl text-gray-800 ">
+            {" "}
+            You just said...{" "}
+          </h3>
+          <p className="w-full p-2 text-gray-500 h-fit bg-[#fffeee] shadow-lg rounded">
+            {text ? text : "Tell us what you thinking!"}
           </p>
         </div>
-        <form>
-          <div>
-            <label className="block text-gray-500 text-[.6rem] uppercase font-bold mb-1">
-              Language
-            </label>
-            <select
-              className="w-full text-[.7rem] rounded-sm border-zinc-300 px-2 py-1 pr-7"
-              name="language"
-              value={language}
-              onChange={(event) => {
-                setLanguage(event.currentTarget.value);
-              }}
-            >
-              {availableLanguages.map(({ lang, label }) => {
-                return (
-                  <option key={lang} value={lang}>
-                    {label} ({lang})
-                  </option>
-                );
-              })}
-            </select>
-          </div>
-        </form>
-        <h3 className="font-semibold text-xl text-black"> You just said... </h3>
-        <p className="max-w-full p-2 text-gray-500 mx-2 h-fit bg-white border-2 shadow-lg border-black rounded-xl">
-          {text ? text : "Tell us what you thinking!"}
-        </p>
-        <h3 className="font-semibold text-xl text-black"> Translation </h3>
-        <p className="max-w-full p-2 text-gray-500 mx-2 h-fit bg-white border-2 shadow-lg border-black rounded-xl">
-          {translation ? translation : "Decinos lo que estas pensando!"}
-        </p>
+        <div>
+          <h3 className="font-medium text-xl text-gray-800 "> Translation </h3>
+          <p className="w-full p-2 text-gray-500 h-fit bg-[#fffeee] shadow-lg rounded">
+            {translation ? translation : "Decinos lo que estas pensando!"}
+          </p>
+        </div>
       </div>
       <button
         onClick={handleOnRecord}
-        className={`bg-[#fffeee] border-4 border-black p-2 rounded-xl 
+        className={`bg-[#fffeee]  p-2 rounded shadow
             font-semibold w-full hover:shadow-xl hover:border-none ${
-              isActive ? "text-red-500" : "text-green-900"
+              isActive ? "text-red-500" : "text-gray-800 "
             } `}
       >
         {isActive ? "Stop" : "Record"}

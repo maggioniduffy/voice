@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google-cloud/translate": "^8.5.1",
     "@types/dom-speech-recognition": "^0.0.4",
     "next": "15.2.1",
     "openai": "^4.86.2",
